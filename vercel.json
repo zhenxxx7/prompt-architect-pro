@@ -1,0 +1,12 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "buildEnv": {
+    "VITE_GEMINI_API_KEY": ""
+  },
+  "env": {
+    "VITE_GEMINI_API_KEY": "@gemini-api-key"
+  }
+}
