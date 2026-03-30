@@ -1,59 +1,76 @@
-# Enhanced Vite React TypeScript Template
+# Prompt Architect Pro
 
-This template includes built-in detection for missing CSS variables between your Tailwind config and CSS files.
+A sleek web application that transforms raw ideas into expertly crafted AI prompts using the RCTCO framework.
 
 ## Features
 
-- **CSS Variable Detection**: Automatically detects if CSS variables referenced in `tailwind.config.cjs` are defined in `src/index.css`
-- **Enhanced Linting**: Includes ESLint, Stylelint, and custom CSS variable validation
-- **Shadcn/ui**: Pre-configured with all Shadcn components
-- **Modern Stack**: Vite + React + TypeScript + Tailwind CSS
+- **Modern Dark UI**: Sleek Slate & Indigo color palette
+- **RCTCO Framework**: Professional prompt optimization using Role-Context-Task-Constraint-Output
+- **Real-time Optimization**: Transform simple ideas into structured prompts
+- **Copy to Clipboard**: One-click copy with visual feedback
+- **Responsive Design**: Optimized for mobile and desktop
+- **Loading States**: Smooth animations and feedback
+
+## Quick Start
+
+```bash
+npm install
+npm run dev
+```
+
+## LLM API Integration
+
+To integrate with a real LLM API (Gemini, OpenAI, etc.), edit `src/App.tsx` and replace the `generateOptimizedPrompt` function with your API call:
+
+```typescript
+const generateOptimizedPrompt = async (input: string): Promise<string> => {
+  // Example with OpenAI
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4',
+      messages: [{
+        role: 'user',
+        content: `Optimize this prompt using RCTCO framework: ${input}`
+      }]
+    })
+  })
+  const data = await response.json()
+  return data.choices[0].message.content
+}
+```
+
+Add your API key to `.env.local`:
+
+```env
+VITE_OPENAI_API_KEY=your-api-key-here
+```
+
+## RCTCO Framework
+
+- **R**ole: Define the AI's persona and expertise
+- **C**ontext: Provide necessary background information
+- **T**ask: Clearly state what needs to be accomplished
+- **C**onstraints: Specify any limitations or requirements
+- **O**utput: Define the expected format and quality
 
 ## Available Scripts
 
 ```bash
-# Run all linting (includes CSS variable check)
-npm run lint
-
-# Check only CSS variables
-npm run check:css-vars
-
-# Individual linting
-npm run lint:js    # ESLint
-npm run lint:css   # Stylelint
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run linting checks
 ```
 
-## CSS Variable Detection
+## Tech Stack
 
-The template includes a custom script that:
-
-1. **Parses `tailwind.config.cjs`** to find all `var(--variable)` references
-2. **Parses `src/index.css`** to find all defined CSS variables (`--variable:`)
-3. **Cross-references** them to find missing definitions
-4. **Reports undefined variables** with clear error messages
-
-### Example Output
-
-When CSS variables are missing:
-```
-❌ Undefined CSS variables found in tailwind.config.cjs:
-   --sidebar-background
-   --sidebar-foreground
-   --sidebar-primary
-
-Add these variables to src/index.css
-```
-
-When all variables are defined:
-```
-✅ All CSS variables in tailwind.config.cjs are defined
-```
-
-## How It Works
-
-The detection happens during the `npm run lint` command, which will:
-- Exit with error code 1 if undefined variables are found
-- Show exactly which variables need to be added to your CSS file
-- Integrate seamlessly with your development workflow
-
-This prevents runtime CSS issues where Tailwind classes reference undefined CSS variables.
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Lucide React Icons
+- @blinkdotnew/ui components
