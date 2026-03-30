@@ -1,14 +1,15 @@
 # Prompt Architect Pro
 
-A sleek web application that transforms raw ideas into expertly crafted AI prompts using **Meta-Prompt Engineer v2.0** - a dynamic, context-aware RCTCO framework.
+A sleek web application that transforms raw ideas into expertly crafted AI prompts using **Meta-Prompt Engineer v2.0** - a dynamic, context-aware RCTCO framework powered by **Google Gemini AI**.
 
 ## Features
 
+- **Powered by Google Gemini**: Real AI-powered prompt optimization using Blink SDK
 - **Dynamic Role Assignment**: Automatically assigns expert roles based on topic (e.g., "Professional Chef" for cooking, "Senior Developer" for coding)
 - **Context-Aware Intelligence**: Infers target audience, tone, and optimal output format
 - **Creative Expansion**: Rewrites user input professionally, not just templated fill-in-the-blanks
 - **8 Specialized Domains**: Software Development, Culinary Arts, Marketing Strategy, Creative Writing, Design, Business Strategy, Data Science, and General
-- **Meta-Prompt Engineer**: Advanced prompt engineering with RCTCO framework
+- **Public Access**: No login required - ready to use immediately
 - **Modern Dark UI**: Sleek Slate & Indigo color palette
 - **Copy to Clipboard**: One-click copy with visual feedback
 - **Responsive Design**: Optimized for mobile and desktop
@@ -22,7 +23,7 @@ npm run dev
 
 ## How It Works
 
-Unlike basic prompt templates, Prompt Architect Pro uses intelligent analysis:
+Unlike basic prompt templates, Prompt Architect Pro uses intelligent analysis powered by Google Gemini:
 
 1. **Domain Detection**: Analyzes keywords to identify the topic area
 2. **Role Assignment**: Assigns the most relevant expert role (not generic "AI Assistant")
@@ -31,39 +32,24 @@ Unlike basic prompt templates, Prompt Architect Pro uses intelligent analysis:
 5. **Tone Setting**: Sets the appropriate communication style
 6. **Format Optimization**: Defines the best output structure for the domain
 
-## LLM API Integration
+## AI Integration
 
-To integrate with a real LLM API (Gemini, OpenAI, etc.), edit `src/App.tsx` and use the Meta-Prompt Engineer system prompt:
+This app uses **Blink SDK** with **Google Gemini AI** for real prompt optimization. The Meta-Prompt Engineer system prompt guides Gemini to create custom-crafted, professional prompts for any topic.
 
-```typescript
-const systemPrompt = `You are a Meta-Prompt Engineer. Your only job is to transform 
-a simple user idea into a comprehensive, high-level professional prompt. You must 
-decide the best Role, Context, and Constraints for that specific topic. If the user 
-input is 'coffee landing page', you must expand it into a full marketing and design brief.`;
+### API Configuration
 
-const response = await fetch('YOUR_API_ENDPOINT', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_API_KEY'
-  },
-  body: JSON.stringify({
-    model: 'gpt-4',
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: `Transform this idea: ${input}` }
-    ]
-  })
-});
-const data = await response.json();
-return data.choices[0].message.content;
-```
+The app uses Blink SDK's built-in AI capabilities. Configure your AI settings in the Blink dashboard:
+- AI Module: Public (no authentication required)
+- Model: Google Gemini (auto-selected by Blink SDK)
+- Fallback: Local RCTCO transformation if API unavailable
 
-Add your API key to `.env.local`:
+### Environment Variables
 
-```env
-VITE_OPENAI_API_KEY=your-api-key-here
-```
+Blink SDK automatically injects:
+- `VITE_BLINK_PROJECT_ID`: Your project identifier
+- `VITE_BLINK_PUBLISHABLE_KEY`: Your publishable key
+
+No manual API key configuration needed - everything is handled by Blink SDK!
 
 ## RCTCO Framework
 
@@ -104,3 +90,4 @@ npm run lint     # Run linting checks
 - Tailwind CSS
 - Lucide React Icons
 - @blinkdotnew/ui components
+- @blinkdotnew/sdk (AI powered by Google Gemini)

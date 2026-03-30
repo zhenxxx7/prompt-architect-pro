@@ -1,26 +1,59 @@
 import { useState } from 'react';
 import { Sparkles, Copy, Trash2, Loader2, Zap } from 'lucide-react';
+import { blink } from './blink/client';
 
 function App() {
   const [rawPrompt, setRawPrompt] = useState('');
   const [optimizedPrompt, setOptimizedPrompt] = useState('');
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState('');
 
-  // RCTCO Framework Optimization Logic
+  // Meta-Prompt Engineer System Prompt
+  const META_PROMPT_ENGINEER = `You are a Meta-Prompt Engineer. Your only job is to transform a simple user idea into a comprehensive, high-level professional prompt for an AI assistant.
+
+Transform the user's input into a detailed, structured prompt that includes:
+
+## ROLE
+Assign an expert role appropriate to the topic (e.g., Senior Developer for coding, Professional Chef for cooking, Marketing Director for marketing, etc.). Include 15+ years of relevant experience.
+
+## PERSONA
+Describe the expert's background, specialties, and approach.
+
+## CONTEXT
+Provide necessary background information and scope for the task.
+
+## TASK
+Rewrite the user's request professionally and in detail. Break it down into clear, actionable components.
+
+## AUDIENCE
+Infer the target audience based on the topic.
+
+## TONE
+Set the appropriate communication style (technical, creative, professional, etc.).
+
+## CONSTRAINTS
+- Provide expert-level guidance with practical, actionable insights
+- Include specific examples, templates, or code snippets where applicable
+- Anticipate follow-up questions and address potential edge cases
+- Maintain consistency and coherence throughout
+
+## OUTPUT FORMAT
+Define the best structure for the deliverable based on the domain (code format for development, recipe format for cooking, etc.).
+
+Be creative and context-aware. Do not use generic templates. Each prompt should feel custom-crafted by an expert consultant.`;
+
+  // RCTCO Framework Optimization Logic with Gemini AI
   const optimizePrompt = async () => {
     if (!rawPrompt.trim()) return;
 
     setIsOptimizing(true);
 
     try {
-      // Placeholder for LLM API call (Gemini, OpenAI, etc.)
-      // Replace this with your actual API integration
-      const optimized = await callLLMAPI(rawPrompt);
+      const optimized = await callGeminiAPI(rawPrompt);
       setOptimizedPrompt(optimized);
     } catch (error) {
       console.error('Optimization failed:', error);
-      // Fallback: Basic RCTCO transformation
+      // Fallback: Dynamic RCTCO transformation
       const fallback = transformWithRCTCO(rawPrompt);
       setOptimizedPrompt(fallback);
     } finally {
@@ -28,37 +61,24 @@ function App() {
     }
   };
 
-  // Placeholder LLM API call - Replace with your actual API
-  const callLLMAPI = async (prompt: string): Promise<string> => {
-    // Example integration with Meta-Prompt Engineer system prompt:
-    //
-    // const systemPrompt = `You are a Meta-Prompt Engineer. Your only job is to transform 
-    // a simple user idea into a comprehensive, high-level professional prompt. You must 
-    // decide the best Role, Context, and Constraints for that specific topic. If the user 
-    // input is 'coffee landing page', you must expand it into a full marketing and design brief.`;
-    //
-    // const response = await fetch('YOUR_API_ENDPOINT', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': 'Bearer YOUR_API_KEY'
-    //   },
-    //   body: JSON.stringify({
-    //     model: 'gpt-4',
-    //     messages: [
-    //       { role: 'system', content: systemPrompt },
-    //       { role: 'user', content: `Transform this idea: ${prompt}` }
-    //     ]
-    //   })
-    // });
-    // const data = await response.json();
-    // return data.choices[0].message.content;
+  // Gemini AI Integration using Blink SDK
+  const callGeminiAPI = async (prompt: string): Promise<string> => {
+    try {
+      const { text } = await blink.ai.generateText({
+        messages: [
+          { role: 'user', content: META_PROMPT_ENGINEER },
+          { role: 'user', content: `Transform this idea into a professional prompt: "${prompt}"` }
+        ],
+        maxTokens: 2048,
+        temperature: 0.7
+      });
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // Dynamic transformation using context-aware RCTCO framework
-    return transformWithRCTCO(prompt);
+      return text || transformWithRCTCO(prompt);
+    } catch (error) {
+      console.error('Gemini API call failed:', error);
+      // Fallback to local transformation if API fails
+      return transformWithRCTCO(prompt);
+    }
   };
 
   // Dynamic Context-Aware RCTCO Transformation
@@ -348,8 +368,8 @@ Crafted by Prompt Architect Pro | Meta-Prompt Engineer v2.0`;
 
     try {
       await navigator.clipboard.writeText(optimizedPrompt);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopied('✓');
+      setTimeout(() => setCopied(''), 2000);
     } catch (error) {
       console.error('Failed to copy:', error);
     }
@@ -446,7 +466,7 @@ Crafted by Prompt Architect Pro | Meta-Prompt Engineer v2.0`;
                 {copied ? (
                   <>
                     <Sparkles className="h-4 w-4 text-green-500" />
-                    <span className="text-green-500">Copied!</span>
+                    <span className="text-green-500">{copied} Copied!</span>
                   </>
                 ) : (
                   <>
