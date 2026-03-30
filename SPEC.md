@@ -9,9 +9,9 @@ Prompt Architect Pro is a sleek web application that transforms raw ideas into e
 - **Styling**: Tailwind CSS with custom design system
 - **Icons**: Lucide React
 - **UI Components**: @blinkdotnew/ui
-- **AI Integration**: @blinkdotnew/sdk with Google Gemini
+- **AI Integration**: Direct Google Gemini API (no SDK)
 - **State Management**: React useState hooks
-- **Access**: Public (no authentication required)
+- **Deployment**: Vercel (self-hosted with user's API key)
 
 ## Design System
 
@@ -178,10 +178,10 @@ const generateOptimizedPrompt = async (input: string): Promise<string> => {
 
 ## AI Integration
 
-### Blink SDK Configuration
-- **AI Module**: Public (no authentication required)
-- **Provider**: Google Gemini via Blink SDK
-- **Model**: Automatically selected by Blink SDK
+### Direct Gemini API Configuration
+- **API Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
+- **Authentication**: API key via query parameter
+- **Environment Variable**: `VITE_GEMINI_API_KEY`
 - **Fallback**: Local RCTCO transformation if API unavailable
 
 ### Meta-Prompt Engineer System
@@ -201,21 +201,25 @@ Transform the user's input into a detailed, structured prompt that includes:
 
 ### API Call Pattern
 ```typescript
-const { text } = await blink.ai.generateText({
-  messages: [
-    { role: 'user', content: META_PROMPT_ENGINEER },
-    { role: 'user', content: `Transform this idea: "${prompt}"` }
-  ],
-  maxTokens: 2048,
-  temperature: 0.7
+// Direct Gemini API call without SDK
+const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+  })
 });
+
+const data = await response.json();
+return data.candidates[0].content.parts[0].text;
 ```
 
 ### Error Handling
 - Try-catch wrapper around API calls
 - Automatic fallback to local RCTCO transformation if API fails
+- User-friendly error messages displayed in UI
 - Console logging for debugging
-- User-friendly error messages
 
 ## File Structure
 ```

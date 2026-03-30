@@ -4,20 +4,86 @@ A sleek web application that transforms raw ideas into expertly crafted AI promp
 
 ## Features
 
-- **Powered by Google Gemini**: Real AI-powered prompt optimization using Blink SDK
+- **Powered by Google Gemini**: Real AI-powered prompt optimization using direct Gemini API
 - **Dynamic Role Assignment**: Automatically assigns expert roles based on topic (e.g., "Professional Chef" for cooking, "Senior Developer" for coding)
 - **Context-Aware Intelligence**: Infers target audience, tone, and optimal output format
 - **Creative Expansion**: Rewrites user input professionally, not just templated fill-in-the-blanks
 - **8 Specialized Domains**: Software Development, Culinary Arts, Marketing Strategy, Creative Writing, Design, Business Strategy, Data Science, and General
-- **Public Access**: No login required - ready to use immediately
 - **Modern Dark UI**: Sleek Slate & Indigo color palette
 - **Copy to Clipboard**: One-click copy with visual feedback
 - **Responsive Design**: Optimized for mobile and desktop
 
-## Quick Start
+## Deployment to Vercel
+
+This app is optimized for deployment on Vercel with your own Google Gemini API key.
+
+### Prerequisites
+
+1. **Google Gemini API Key**
+   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Free tier available with rate limits
+
+2. **Vercel Account**
+   - Sign up at [vercel.com](https://vercel.com)
+   - Connect your GitHub repository
+
+### Deployment Steps
+
+#### Method 1: One-Click Deploy (Recommended)
+
+1. Fork this repository to your GitHub account
+2. Go to [vercel.com/new](https://vercel.com/new)
+3. Import your forked repository
+4. Add Environment Variable:
+   - Key: `VITE_GEMINI_API_KEY`
+   - Value: Your Gemini API key
+5. Click "Deploy"
+
+#### Method 2: Vercel CLI
 
 ```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Login to Vercel
+vercel login
+
+# Add API key
+vercel env add VITE_GEMINI_API_KEY
+
+# Deploy
+vercel
+```
+
+### Environment Variables
+
+Create a `.env.local` file for local development:
+
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+For Vercel, add this in your project settings:
+- Go to Settings → Environment Variables
+- Add `VITE_GEMINI_API_KEY` with your Gemini API key
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/prompt-architect-pro.git
+cd prompt-architect-pro
+
+# Install dependencies
 npm install
+
+# Create .env.local file
+cp .env.example .env.local
+
+# Edit .env.local and add your API key
+nano .env.local
+
+# Start development server
 npm run dev
 ```
 
@@ -31,25 +97,6 @@ Unlike basic prompt templates, Prompt Architect Pro uses intelligent analysis po
 4. **Audience Inference**: Determines the target audience automatically
 5. **Tone Setting**: Sets the appropriate communication style
 6. **Format Optimization**: Defines the best output structure for the domain
-
-## AI Integration
-
-This app uses **Blink SDK** with **Google Gemini AI** for real prompt optimization. The Meta-Prompt Engineer system prompt guides Gemini to create custom-crafted, professional prompts for any topic.
-
-### API Configuration
-
-The app uses Blink SDK's built-in AI capabilities. Configure your AI settings in the Blink dashboard:
-- AI Module: Public (no authentication required)
-- Model: Google Gemini (auto-selected by Blink SDK)
-- Fallback: Local RCTCO transformation if API unavailable
-
-### Environment Variables
-
-Blink SDK automatically injects:
-- `VITE_BLINK_PROJECT_ID`: Your project identifier
-- `VITE_BLINK_PUBLISHABLE_KEY`: Your publishable key
-
-No manual API key configuration needed - everything is handled by Blink SDK!
 
 ## RCTCO Framework
 
@@ -74,6 +121,31 @@ Extended RCTCO with intelligent enhancements:
 - **Data Science**: Principal Data Scientist
 - **General**: Subject Matter Expert
 
+## Troubleshooting
+
+### "API key not configured" Error
+
+1. Make sure you've added `VITE_GEMINI_API_KEY` environment variable
+2. For local development, create a `.env.local` file
+3. For Vercel, add it in project settings → Environment Variables
+
+### API Rate Limit
+
+- Google Gemini has rate limits on free tier
+- If you exceed limits, wait a few minutes and try again
+- Consider upgrading to a paid plan for higher limits
+
+### Build Errors
+
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Rebuild
+npm run build
+```
+
 ## Available Scripts
 
 ```bash
@@ -90,4 +162,21 @@ npm run lint     # Run linting checks
 - Tailwind CSS
 - Lucide React Icons
 - @blinkdotnew/ui components
-- @blinkdotnew/sdk (AI powered by Google Gemini)
+- Google Gemini API (Direct Integration)
+
+## License
+
+MIT License - feel free to use this project for personal or commercial purposes.
+
+## Support
+
+For issues or questions:
+1. Check the [troubleshooting section](#troubleshooting)
+2. Review [Google Gemini API documentation](https://ai.google.dev/docs)
+3. Open an issue on GitHub
+
+## Deploy Now
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/prompt-architect-pro)
+
+**Note**: Replace `your-username` with your GitHub username after forking.

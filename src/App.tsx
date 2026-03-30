@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Sparkles, Copy, Trash2, Loader2, Zap } from 'lucide-react';
-import { blink } from './blink/client';
+import { callGeminiAPI } from './lib/gemini';
 
 function App() {
   const [rawPrompt, setRawPrompt] = useState('');
   const [optimizedPrompt, setOptimizedPrompt] = useState('');
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [copied, setCopied] = useState('');
+  const [error, setError] = useState('');
 
   // Meta-Prompt Engineer System Prompt
   const META_PROMPT_ENGINEER = `You are a Meta-Prompt Engineer. Your only job is to transform a simple user idea into a comprehensive, high-level professional prompt for an AI assistant.
@@ -47,37 +48,30 @@ Be creative and context-aware. Do not use generic templates. Each prompt should 
     if (!rawPrompt.trim()) return;
 
     setIsOptimizing(true);
+    setError('');
 
     try {
-      const optimized = await callGeminiAPI(rawPrompt);
+      // Get API key from environment variable
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      
+      if (!apiKey) {
+        throw new Error('API key not configured');
+      }
+
+      const fullPrompt = `${META_PROMPT_ENGINEER}\n\nUser's idea: "${rawPrompt}"\n\nTransform this idea into a professional prompt following the RCTCO framework above.`;
+
+      const optimized = await callGeminiAPI(fullPrompt, apiKey);
       setOptimizedPrompt(optimized);
     } catch (error) {
       console.error('Optimization failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(errorMessage);
+      
       // Fallback: Dynamic RCTCO transformation
       const fallback = transformWithRCTCO(rawPrompt);
       setOptimizedPrompt(fallback);
     } finally {
       setIsOptimizing(false);
-    }
-  };
-
-  // Gemini AI Integration using Blink SDK
-  const callGeminiAPI = async (prompt: string): Promise<string> => {
-    try {
-      const { text } = await blink.ai.generateText({
-        messages: [
-          { role: 'user', content: META_PROMPT_ENGINEER },
-          { role: 'user', content: `Transform this idea into a professional prompt: "${prompt}"` }
-        ],
-        maxTokens: 2048,
-        temperature: 0.7
-      });
-
-      return text || transformWithRCTCO(prompt);
-    } catch (error) {
-      console.error('Gemini API call failed:', error);
-      // Fallback to local transformation if API fails
-      return transformWithRCTCO(prompt);
     }
   };
 
@@ -447,6 +441,17 @@ Crafted by Prompt Architect Pro | Meta-Prompt Engineer v2.0`;
               </>
             )}
           </button>
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+              <p className="font-semibold mb-1">API Error:</p>
+              <p>{error}</p>
+              <p className="text-xs mt-2 opacity-80">
+                Using offline mode. Results may be less sophisticated.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Output Section */}
