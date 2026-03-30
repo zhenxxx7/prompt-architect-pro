@@ -1,7 +1,7 @@
 # Prompt Architect Pro - Technical Specification
 
 ## Overview
-Prompt Architect Pro is a sleek web application that transforms raw ideas into expertly crafted AI prompts using the RCTCO framework (Role-Context-Task-Constraint-Output).
+Prompt Architect Pro is a sleek web application that transforms raw ideas into expertly crafted AI prompts using **Meta-Prompt Engineer v2.0** - a dynamic, context-aware RCTCO framework powered by **Google Gemini AI**.
 
 ## Tech Stack
 - **Frontend**: React 18 + TypeScript
@@ -9,8 +9,9 @@ Prompt Architect Pro is a sleek web application that transforms raw ideas into e
 - **Styling**: Tailwind CSS with custom design system
 - **Icons**: Lucide React
 - **UI Components**: @blinkdotnew/ui
+- **AI Integration**: @blinkdotnew/sdk with Google Gemini
 - **State Management**: React useState hooks
-- **API**: Placeholder for LLM integration (Gemini, OpenAI, etc.)
+- **Access**: Public (no authentication required)
 
 ## Design System
 
@@ -175,12 +176,55 @@ const generateOptimizedPrompt = async (input: string): Promise<string> => {
 - Primary color: 67.5% lightness (readable)
 - Foreground: 96% lightness (high contrast)
 
+## AI Integration
+
+### Blink SDK Configuration
+- **AI Module**: Public (no authentication required)
+- **Provider**: Google Gemini via Blink SDK
+- **Model**: Automatically selected by Blink SDK
+- **Fallback**: Local RCTCO transformation if API unavailable
+
+### Meta-Prompt Engineer System
+```typescript
+const META_PROMPT_ENGINEER = `You are a Meta-Prompt Engineer. Your only job is to transform a simple user idea into a comprehensive, high-level professional prompt...
+
+Transform the user's input into a detailed, structured prompt that includes:
+- ROLE: Assign an expert role appropriate to the topic
+- PERSONA: Describe the expert's background and specialties
+- CONTEXT: Provide necessary background information
+- TASK: Rewrite the request professionally and in detail
+- AUDIENCE: Infer the target audience based on the topic
+- TONE: Set the appropriate communication style
+- CONSTRAINTS: Expert-level guidance and actionable insights
+- OUTPUT FORMAT: Define the best structure for the deliverable`
+```
+
+### API Call Pattern
+```typescript
+const { text } = await blink.ai.generateText({
+  messages: [
+    { role: 'user', content: META_PROMPT_ENGINEER },
+    { role: 'user', content: `Transform this idea: "${prompt}"` }
+  ],
+  maxTokens: 2048,
+  temperature: 0.7
+});
+```
+
+### Error Handling
+- Try-catch wrapper around API calls
+- Automatic fallback to local RCTCO transformation if API fails
+- Console logging for debugging
+- User-friendly error messages
+
 ## File Structure
 ```
 src/
 ├── App.tsx           # Main application component
 ├── main.tsx         # React entry point
 ├── index.css        # Global styles & design system
+├── blink/
+│   └── client.ts   # Blink SDK client initialization
 ├── lib/
 │   └── utils.ts     # Utility functions
 ```
