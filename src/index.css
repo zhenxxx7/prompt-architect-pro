@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lora:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Blink UI Theme CSS
+   REQUIRED for @blinkdotnew/ui components to render correctly.
+   BlinkUIProvider adds .theme-{name} + .dark/.light to <html>,
+   activating the matching CSS variable set below.
+   ───────────────────────────────────────────────────────────────────────────── */
+@import '@blinkdotnew/ui/styles';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    letter-spacing: var(--tracking-normal);
+  }
+}
+
+/* ── Prompt Architect - Slate & Indigo Dark Theme ─────────────────────────── */
+
+:root {
+  /* Dark Mode Only - Slate & Indigo Palette */
+  --background: 222.2 47.4% 6%;           /* Deep slate #0B0F19 */
+  --foreground: 210 40% 96%;             /* Off-white #F1F5F9 */
+  --card: 217.2 32.6% 10%;                /* Dark slate #151B28 */
+  --card-foreground: 210 40% 96%;         /* Off-white */
+  --popover: 217.2 32.6% 10%;            /* Dark slate */
+  --popover-foreground: 210 40% 96%;     /* Off-white */
+  --primary: 243.5 94.3% 67.5%;          /* Indigo #818CF8 */
+  --primary-foreground: 222.2 47.4% 6%;  /* Deep slate */
+  --secondary: 215 27.9% 16.9%;          /* Slate #1E293B */
+  --secondary-foreground: 210 40% 96%;  /* Off-white */
+  --muted: 215 27.9% 16.9%;              /* Slate */
+  --muted-foreground: 215 20.2% 55%;     /* Muted slate #94A3B8 */
+  --accent: 243.5 94.3% 67.5%;           /* Indigo */
+  --accent-foreground: 222.2 47.4% 6%;    /* Deep slate */
+  --destructive: 0 62.8% 60%;            /* Red #EF4444 */
+  --destructive-foreground: 0 0% 100%;   /* White */
+  --border: 215 27.9% 25%;               /* Slate border #334155 */
+  --input: 215 27.9% 25%;                /* Slate input */
+  --ring: 243.5 94.3% 67.5%;             /* Indigo ring */
+
+  /* Charts */
+  --chart-1: 243.5 94.3% 67.5%;          /* Indigo */
+  --chart-2: 199 89% 60%;                /* Blue */
+  --chart-3: 280 65% 60%;                /* Purple */
+  --chart-4: 174 62% 50%;               /* Teal */
+  --chart-5: 24 95% 53%;                 /* Orange */
+
+  /* Sidebar */
+  --sidebar: 217.2 32.6% 10%;            /* Dark slate */
+  --sidebar-foreground: 210 40% 96%;     /* Off-white */
+  --sidebar-primary: 243.5 94.3% 67.5%;  /* Indigo */
+  --sidebar-primary-foreground: 222.2 47.4% 6%;
+  --sidebar-accent: 215 27.9% 16.9%;    /* Slate */
+  --sidebar-accent-foreground: 210 40% 96%;
+  --sidebar-border: 215 27.9% 25%;       /* Slate border */
+  --sidebar-ring: 243.5 94.3% 67.5%;     /* Indigo */
+
+  /* Typography */
+  --font-sans: 'DM Sans', sans-serif;
+  --font-serif: 'Lora', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Shadows */
+  --shadow-2xs: 0 4px 8px -1px rgba(0, 0, 0, 0.4);
+  --shadow-xs: 0 4px 8px -1px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 4px 8px -1px rgba(0, 0, 0, 0.5), 0 1px 2px -2px rgba(0, 0, 0, 0.5);
+  --shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.5), 0 1px 2px -2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 8px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 4px 8px -1px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 4px 8px -1px rgba(0, 0, 0, 0.5), 0 8px 10px -2px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 4px 8px -1px rgba(0, 0, 0, 0.6);
+
+  /* Misc */
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+  --radius: 0.75rem;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
