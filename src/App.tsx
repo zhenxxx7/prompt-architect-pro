@@ -30,8 +30,13 @@ function App() {
 
   // Placeholder LLM API call - Replace with your actual API
   const callLLMAPI = async (prompt: string): Promise<string> => {
-    // Example integration (uncomment and configure as needed):
-    // 
+    // Example integration with Meta-Prompt Engineer system prompt:
+    //
+    // const systemPrompt = `You are a Meta-Prompt Engineer. Your only job is to transform 
+    // a simple user idea into a comprehensive, high-level professional prompt. You must 
+    // decide the best Role, Context, and Constraints for that specific topic. If the user 
+    // input is 'coffee landing page', you must expand it into a full marketing and design brief.`;
+    //
     // const response = await fetch('YOUR_API_ENDPOINT', {
     //   method: 'POST',
     //   headers: {
@@ -39,45 +44,302 @@ function App() {
     //     'Authorization': 'Bearer YOUR_API_KEY'
     //   },
     //   body: JSON.stringify({
-    //     prompt: `Transform this prompt using the RCTCO framework (Role, Context, Task, Constraint, Output):
-    //     
-    //     Original Prompt: ${prompt}
-    //     
-    //     Provide the optimized prompt.`
+    //     model: 'gpt-4',
+    //     messages: [
+    //       { role: 'system', content: systemPrompt },
+    //       { role: 'user', content: `Transform this idea: ${prompt}` }
+    //     ]
     //   })
     // });
     // const data = await response.json();
-    // return data.optimized_prompt;
+    // return data.choices[0].message.content;
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Fallback transformation using RCTCO framework
+    // Dynamic transformation using context-aware RCTCO framework
     return transformWithRCTCO(prompt);
   };
 
-  // RCTCO Framework Transformation
+  // Dynamic Context-Aware RCTCO Transformation
   const transformWithRCTCO = (input: string): string => {
-    const context = "You are an AI assistant specialized in providing expert assistance.";
-    const task = input.includes('?') ? input : `${input}?`;
-    const role = "Expert AI Assistant";
-    const constraints = "Provide detailed, accurate, and well-structured responses. Use clear formatting with bullet points and examples when appropriate.";
-    const output = "Deliver a comprehensive response that addresses the user's request with depth and practical value.";
+    // Analyze input to determine domain and appropriate role
+    const analysis = analyzePrompt(input);
+    
+    // Creative expansion: rewrite the task professionally
+    const expandedTask = expandTask(input, analysis);
+    
+    // Infer audience and tone based on context
+    const { audience, tone } = inferAudienceAndTone(analysis);
+    
+    // Determine best output format
+    const outputFormat = determineOutputFormat(analysis);
 
-    return `## Role
-${role}
+    return `## ROLE
+${analysis.role}
 
-## Context
-${context}
+${analysis.persona}
 
-## Task
-${task}
+## CONTEXT
+${analysis.context}
 
-## Constraints
-${constraints}
+## TASK
+${expandedTask}
 
-## Output
-${output}`;
+## AUDIENCE
+${audience}
+
+## TONE
+${tone}
+
+## CONSTRAINTS
+- Provide expert-level guidance with practical, actionable insights
+- Use clear, concise language appropriate for ${analysis.audienceLevel}
+- Include specific examples, templates, or code snippets where applicable
+- Anticipate follow-up questions and address potential edge cases
+- Maintain consistency and coherence throughout the response
+
+## OUTPUT
+${outputFormat}
+
+---
+Crafted by Prompt Architect Pro | Meta-Prompt Engineer v2.0`;
+  };
+
+  // Intelligent Prompt Analysis
+  const analyzePrompt = (input: string): {
+    domain: string;
+    role: string;
+    persona: string;
+    context: string;
+    audienceLevel: string;
+    keywords: string[];
+  } => {
+    const lowerInput = input.toLowerCase();
+    const keywords = extractKeywords(lowerInput);
+    
+    // Domain detection and role assignment
+    if (matchesAny(lowerInput, ['code', 'programming', 'software', 'developer', 'function', 'api', 'database', 'debug', 'algorithm'])) {
+      return {
+        domain: 'software_development',
+        role: 'Senior Software Architect & Technical Lead',
+        persona: 'You have 15+ years of experience in software engineering, system design, and code architecture. You specialize in writing clean, maintainable, scalable code following industry best practices and design patterns.',
+        context: 'The user needs a solution for software development, programming, or technical implementation. Consider performance, scalability, security, and maintainability in your response.',
+        audienceLevel: 'technical professionals',
+        keywords
+      };
+    }
+    
+    if (matchesAny(lowerInput, ['cook', 'recipe', 'food', 'chef', 'meal', 'diet', 'nutrition', 'ingredient', 'kitchen'])) {
+      return {
+        domain: 'culinary_arts',
+        role: 'Professional Executive Chef & Nutrition Consultant',
+        persona: 'You are a classically trained chef with expertise in various cuisines, nutritional science, and culinary techniques. You balance creativity with practicality, ensuring dishes are both delicious and suitable for the target audience.',
+        context: 'The user needs culinary guidance ranging from specific recipes to meal planning. Consider dietary restrictions, cooking skill level, available equipment, and nutritional balance.',
+        audienceLevel: 'home cooks to culinary enthusiasts',
+        keywords
+      };
+    }
+    
+    if (matchesAny(lowerInput, ['marketing', 'brand', 'campaign', 'seo', 'social media', 'content', 'advertising', 'copywrite'])) {
+      return {
+        domain: 'marketing_strategy',
+        role: 'Strategic Marketing Director & Brand Architect',
+        persona: 'You have deep expertise in digital marketing, brand development, content strategy, and consumer psychology. You create data-driven marketing solutions that resonate with target audiences and achieve measurable results.',
+        context: 'The user needs marketing guidance for promoting products, services, or brands. Consider market trends, audience segmentation, multi-channel strategies, and ROI optimization.',
+        audienceLevel: 'marketing professionals and business owners',
+        keywords
+      };
+    }
+    
+    if (matchesAny(lowerInput, ['write', 'blog', 'article', 'story', 'creative', 'fiction', 'book', 'novel', 'script'])) {
+      return {
+        domain: 'creative_writing',
+        role: 'Professional Author & Creative Writing Coach',
+        persona: 'You are an accomplished writer with expertise in multiple genres and styles. You understand narrative structure, character development, pacing, and the art of engaging storytelling.',
+        context: 'The user needs creative writing assistance, whether it\'s crafting compelling narratives, developing characters, or structuring content for maximum impact.',
+        audienceLevel: 'writers and content creators',
+        keywords
+      };
+    }
+    
+    if (matchesAny(lowerInput, ['design', 'ui', 'ux', 'interface', 'visual', 'graphic', 'layout', 'prototype', 'wireframe'])) {
+      return {
+        domain: 'design',
+        role: 'Senior UX/UI Designer & Design Systems Expert',
+        persona: 'You have a strong background in user experience design, visual design principles, and design thinking methodology. You create intuitive, accessible, and aesthetically pleasing interfaces.',
+        context: 'The user needs design guidance for digital products or visual communication. Consider usability, accessibility, visual hierarchy, and design system consistency.',
+        audienceLevel: 'designers and product teams',
+        keywords
+      };
+    }
+    
+    if (matchesAny(lowerInput, ['business', 'strategy', 'startup', 'plan', 'consulting', 'management', 'executive'])) {
+      return {
+        domain: 'business_strategy',
+        role: 'Senior Business Consultant & Strategy Advisor',
+        persona: 'You have extensive experience in strategic planning, market analysis, business development, and organizational leadership. You provide actionable insights grounded in business fundamentals and market realities.',
+        context: 'The user needs business guidance for decision-making, planning, or problem-solving. Consider market dynamics, competitive positioning, resource allocation, and risk assessment.',
+        audienceLevel: 'business leaders and entrepreneurs',
+        keywords
+      };
+    }
+    
+    if (matchesAny(lowerInput, ['data', 'analysis', 'analytics', 'machine learning', 'ai', 'ml', 'model', 'statistics', 'visualization'])) {
+      return {
+        domain: 'data_science',
+        role: 'Principal Data Scientist & Machine Learning Engineer',
+        persona: 'You have deep expertise in statistical analysis, machine learning algorithms, data visualization, and extracting actionable insights from complex datasets.',
+        context: 'The user needs data science guidance for analysis, modeling, or decision support. Consider data quality, model selection, validation, and interpretability.',
+        audienceLevel: 'data professionals and analysts',
+        keywords
+      };
+    }
+    
+    // Default: General expert consultant
+    return {
+      domain: 'general',
+      role: 'Subject Matter Expert & Professional Consultant',
+      persona: 'You are a knowledgeable professional with deep expertise in providing comprehensive, well-researched guidance across various topics. You combine theoretical knowledge with practical experience.',
+      context: 'The user needs expert guidance on their specific request. Provide thorough, accurate, and helpful information that addresses their underlying needs.',
+      audienceLevel: 'general audience',
+      keywords
+    };
+  };
+
+  // Extract meaningful keywords from input
+  const extractKeywords = (input: string): string[] => {
+    const stopWords = new Set(['a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'to', 'of', 'in', 'for', 'on', 'with', 'at', 'by', 'from', 'as', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very']);
+    return input
+      .replace(/[^\w\s]/g, ' ')
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !stopWords.has(word));
+  };
+
+  // Check if input matches any keywords
+  const matchesAny = (input: string, keywords: string[]): boolean => {
+    return keywords.some(keyword => input.includes(keyword));
+  };
+
+  // Creative Task Expansion
+  const expandTask = (input: string, analysis: any): string => {
+    // Professional rewrite of the user's request
+    const cleanedInput = input.trim();
+    
+    // Detect intent and expand appropriately
+    if (cleanedInput.endsWith('?')) {
+      // It's a question - expand into a comprehensive answer request
+      return `Provide a comprehensive, expert-level response to the following inquiry:\n\n"${cleanedInput.slice(0, -1)}"\n\nYour response should:\n- Address the core question directly and concisely\n- Provide relevant background or context where helpful\n- Include practical examples or applications\n- Consider potential follow-up questions or related considerations`;
+    } else {
+      // It's a request/task - expand into a detailed task description
+      return `Execute the following task with professional expertise and attention to detail:\n\n"${cleanedInput}"\n\nRequired approach:\n- Break down the task into clear, actionable steps\n- Provide the deliverable with appropriate depth and complexity\n- Include relevant examples, templates, or demonstrations\n- Ensure the output is immediately usable and practical`;
+    }
+  };
+
+  // Infer target audience and tone
+  const inferAudienceAndTone = (analysis: any): { audience: string; tone: string } => {
+    switch (analysis.domain) {
+      case 'software_development':
+        return {
+          audience: 'Software developers, engineers, and technical architects who need precise, implementable solutions',
+          tone: 'Technical, precise, and systematic with code examples and architectural considerations'
+        };
+      case 'culinary_arts':
+        return {
+          audience: 'Home cooks to intermediate chefs seeking delicious, practical recipes and culinary techniques',
+          tone: 'Warm, encouraging, and detailed with emphasis on technique and flavor balance'
+        };
+      case 'marketing_strategy':
+        return {
+          audience: 'Marketing professionals, business owners, and entrepreneurs looking for effective strategies',
+          tone: 'Strategic, results-oriented, and data-informed with creative insights'
+        };
+      case 'creative_writing':
+        return {
+          audience: 'Writers, content creators, and storytellers seeking engaging, well-crafted content',
+          tone: 'Creative, evocative, and narrative-driven with attention to style and voice'
+        };
+      case 'design':
+        return {
+          audience: 'Designers, product managers, and teams creating user-centered digital experiences',
+          tone: 'Visual, user-focused, and systematic with emphasis on usability and aesthetics'
+        };
+      case 'business_strategy':
+        return {
+          audience: 'Business leaders, executives, and entrepreneurs making strategic decisions',
+          tone: 'Professional, analytical, and actionable with attention to market realities'
+        };
+      case 'data_science':
+        return {
+          audience: 'Data scientists, analysts, and technical professionals working with data-driven insights',
+          tone: 'Analytical, methodical, and statistically rigorous with practical applications'
+        };
+      default:
+        return {
+          audience: 'Professionals and enthusiasts seeking expert guidance on the topic',
+          tone: 'Professional, informative, and engaging with appropriate depth for the subject matter'
+        };
+    }
+  };
+
+  // Determine best output format
+  const determineOutputFormat = (analysis: any): string => {
+    switch (analysis.domain) {
+      case 'software_development':
+        return `- Structured code with comments and documentation
+- Explanation of approach and design decisions
+- Time and space complexity analysis
+- Potential alternatives or optimizations
+- Usage examples and testing considerations`;
+      case 'culinary_arts':
+        return `Detailed recipe with:
+- Ingredient list with precise measurements
+- Step-by-step cooking instructions
+- Prep and cook times
+- Serving suggestions and variations
+- Pro tips for best results`;
+      case 'marketing_strategy':
+        return `Comprehensive marketing deliverable including:
+- Executive summary
+- Strategic recommendations
+- Tactical implementation plan
+- Key metrics and success indicators
+- Budget and resource considerations`;
+      case 'creative_writing':
+        return `Polished written content with:
+- Compelling narrative or argument
+- Appropriate structure and pacing
+- Vivid descriptions and engaging prose
+- Clear beginning, middle, and end`;
+      case 'design':
+        return `Design specification including:
+- Conceptual overview
+- User flow and information architecture
+- Visual design guidelines
+- Component specifications
+- Usability considerations and accessibility`;
+      case 'business_strategy':
+        return `Strategic business deliverable:
+- Situation analysis
+- Strategic options and recommendations
+- Implementation roadmap
+- Risk assessment and mitigation
+- Expected outcomes and KPIs`;
+      case 'data_science':
+        return `Data science output with:
+- Methodology and approach
+- Data analysis and visualizations
+- Model specifications (if applicable)
+- Insights and recommendations
+- Limitations and next steps`;
+      default:
+        return `Comprehensive response with:
+- Clear, direct answer or solution
+- Supporting details and context
+- Practical examples or applications
+- Actionable recommendations
+- Quality and accuracy standards`;
+    }
   };
 
   // Copy to Clipboard
